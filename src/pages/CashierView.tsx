@@ -51,7 +51,9 @@ const CashierView: React.FC<CashierViewProps> = ({ business }) => {
     };
     scanner.render(onScanSuccess, undefined);
     return () => {
-      scanner.clear().catch((err) => {});
+      scanner.clear().catch((err) => {
+        console.log(err);
+      });
     };
   }, [showScanner]);
 

@@ -23,7 +23,7 @@ const styles = {
     margin: "15px 0",
     fontSize: "18px",
   },
-};
+} as const;
 
 type TransactionViewProps = {
   client: Client;
@@ -49,11 +49,8 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
   );
 
   const handleAccrue = () => {
-    // ... (логика начисления бонусов, такая же как была)
-    const purchase = parseFloat(purchaseAmount);
     const cashback = calculatedCashback;
     const newBalance = client.balance + cashback;
-    // updateClientBalance(client.id, newBalance); // Эту логику лучше вызывать в родительском компоненте
     onComplete(`Начислено: ${cashback}. Новый баланс: ${newBalance}`);
   };
 
