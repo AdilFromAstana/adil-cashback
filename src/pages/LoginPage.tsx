@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Button from "../component/Button";
 import Input from "../component/Input";
 import type { AuthenticatedUser } from "../types";
+import PhoneInput from "react-phone-input-2";
 
 type LoginPageProps = {
   onLogin: (
@@ -64,20 +65,17 @@ const LoginPage: React.FC<LoginPageProps> = ({
   const [error, setError] = useState("");
 
   const handleLogin = () => {
-    // Вызываем onLogin с правильным типом в зависимости от активной вкладки
     const result = onLogin(login, password, activeTab);
     if (!result) {
       setError("Неверные данные для входа");
-      // Очищаем поля после неудачной попытки
-      setLogin("");
+      setLogin("7");
       setPassword("");
     }
   };
 
-  // Сбрасываем поля при переключении вкладок
   const switchTab = (tab: "customer" | "business") => {
     setActiveTab(tab);
-    setLogin("");
+    setLogin("7");
     setPassword("");
     setError("");
   };
@@ -86,7 +84,6 @@ const LoginPage: React.FC<LoginPageProps> = ({
     <div style={styles.container}>
       <h1 style={styles.title}>Добро пожаловать!</h1>
 
-      {/* Контейнер с вкладками */}
       <div style={styles.tabsContainer}>
         <div
           style={
@@ -114,13 +111,31 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
       {/* Форма входа */}
       <div style={styles.formContainer}>
-        <Input
-          type={activeTab === "customer" ? "tel" : "text"}
-          placeholder={
-            activeTab === "customer" ? "Номер телефона" : "Логин бизнеса"
-          }
+        <PhoneInput
+          country={"kz"}
           value={login}
-          onChange={(e) => setLogin(e.target.value)}
+          onChange={setLogin}
+          placeholder="Номер телефона"
+          onlyCountries={["kz"]}
+          disableDropdown
+          countryCodeEditable={false}
+          defaultMask="-(...)-...-..-.."
+          alwaysDefaultMask={true}
+          inputStyle={{
+            height: "50px",
+            width: "100%",
+            fontSize: "16px",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+          }}
+          buttonStyle={{
+            border: "1px solid #ccc",
+            borderRadius: "8px 0 0 8px",
+            backgroundColor: "white",
+          }}
+          containerStyle={{
+            marginBottom: "15px",
+          }}
         />
         <Input
           type="password"

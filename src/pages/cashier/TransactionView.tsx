@@ -112,7 +112,7 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
       >
         <h3 style={styles.sheetTitle}>Начисление бонусов</h3>
         <Input
-          type="number"
+          type="tel"
           placeholder="Введите сумму чека, тг"
           value={purchaseAmount}
           onChange={(e) => setPurchaseAmount(e.target.value)}
@@ -138,7 +138,7 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
           Списать всё ({client.balance} бонусов)
         </Button>
         <Input
-          type="number"
+          type="tel"
           placeholder="Введите сумму списания"
           value={redeemAmount}
           onChange={(e) => setRedeemAmount(e.target.value)}

@@ -23,6 +23,7 @@ export interface Transaction {
   date: string;
   type: "начисление" | "списание";
   amount: number;
+  purchaseAmount?: number;
   description: string;
 }
 

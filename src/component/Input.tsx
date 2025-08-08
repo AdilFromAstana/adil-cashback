@@ -15,7 +15,7 @@ const styles: { [key: string]: React.CSSProperties } = {
 };
 
 const Input: React.FC<InputProps> = (props) => {
-  return <input style={styles.input} {...props} />;
+  return <input style={styles.input} {...props} type="tel" />;
 };
 
 export default Input;

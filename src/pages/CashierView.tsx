@@ -29,7 +29,6 @@ const CashierView: React.FC<CashierViewProps> = ({ business }) => {
   const [confirmation, setConfirmation] = useState("");
 
   useEffect(() => {
-    // ... (useEffect для сканера остается здесь, так как он управляет состоянием этого компонента)
     if (!showScanner) return;
     const scanner = new Html5QrcodeScanner(
       "qr-scanner-region",

@@ -1,11 +1,10 @@
+// src/components/BurgerMenu.tsx
+
 import React, { useState } from "react";
+import type { ViewState } from "../App";
 
 const styles: { [key: string]: React.CSSProperties } = {
-  burgerIcon: {
-    cursor: "pointer",
-    padding: "10px",
-    zIndex: 101,
-  },
+  burgerIcon: { cursor: "pointer", padding: "10px", zIndex: 101 },
   line: {
     width: "25px",
     height: "3px",
@@ -35,9 +34,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     transform: "translateX(100%)",
     transition: "transform 0.3s ease-in-out",
   },
-  menuOpen: {
-    transform: "translateX(0)",
-  },
+  menuOpen: { transform: "translateX(0)" },
   menuItem: {
     padding: "15px 20px",
     cursor: "pointer",
@@ -47,15 +44,93 @@ const styles: { [key: string]: React.CSSProperties } = {
 };
 
 type BurgerMenuProps = {
-  onBecomePartner: () => void;
+  userType: "customer" | "owner" | "cashier";
+  onNavigate: (view: ViewState) => void;
   onLogout: () => void;
 };
 
 const BurgerMenu: React.FC<BurgerMenuProps> = ({
-  onBecomePartner,
+  userType,
+  onNavigate,
   onLogout,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Обертка, чтобы закрывать меню после клика
+  const handleNavigate = (view: ViewState) => {
+    onNavigate(view);
+    setIsOpen(false);
+  };
+
+  const renderMenuItems = () => {
+    switch (userType) {
+      case "customer":
+        return (
+          <>
+            <div
+              style={styles.menuItem}
+              onClick={() => handleNavigate("customer_dashboard")}
+            >
+              Главная
+            </div>
+            <div
+              style={styles.menuItem}
+              onClick={() => handleNavigate("shopping_list")}
+            >
+              История покупок
+            </div>
+            <div
+              style={styles.menuItem}
+              onClick={() => handleNavigate("settings")}
+            >
+              Настройки
+            </div>
+            <div
+              style={styles.menuItem}
+              onClick={() => handleNavigate("partner_registration")}
+            >
+              Стать партнером
+            </div>
+          </>
+        );
+      case "owner":
+        return (
+          <>
+            <div
+              style={styles.menuItem}
+              onClick={() => handleNavigate("cashier_dashboard")}
+            >
+              Режим кассы
+            </div>
+            <div
+              style={styles.menuItem}
+              onClick={() => handleNavigate("clients_list")}
+            >
+              Список клиентов
+            </div>
+            <div
+              style={styles.menuItem}
+              onClick={() => handleNavigate("settings")}
+            >
+              Настройки
+            </div>
+          </>
+        );
+      case "cashier":
+        return (
+          <>
+            <div
+              style={styles.menuItem}
+              onClick={() => handleNavigate("cashier_dashboard")}
+            >
+              Касса
+            </div>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
@@ -68,15 +143,7 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({
         <div style={styles.menuOverlay} onClick={() => setIsOpen(false)}></div>
       )}
       <div style={{ ...styles.menu, ...(isOpen && styles.menuOpen) }}>
-        <div
-          style={styles.menuItem}
-          onClick={() => alert("Раздел в разработке")}
-        >
-          Профиль
-        </div>
-        <div style={styles.menuItem} onClick={onBecomePartner}>
-          Стать партнером
-        </div>
+        {renderMenuItems()}
         <div style={styles.menuItem} onClick={onLogout}>
           Выйти
         </div>

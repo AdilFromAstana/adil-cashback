@@ -1,5 +1,8 @@
+// src/components/Header.tsx
+
 import React, { useState } from "react";
 import type { AuthenticatedUser } from "../types";
+import type { ViewState } from "../App";
 import BurgerMenu from "./BurgerMenu";
 import ConfirmationModal from "./ConfirmationModal";
 
@@ -12,29 +15,21 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderBottom: "1px solid #eee",
     backgroundColor: "#fff",
   },
-  title: {
-    margin: 0,
-    fontSize: "20px",
-    fontWeight: "bold",
-  },
+  title: { margin: 0, fontSize: "20px", fontWeight: "bold" },
 };
 
 type HeaderProps = {
   user: AuthenticatedUser | null;
   onLogout: () => void;
-  onBecomePartner: () => void;
+  onNavigate: (view: ViewState) => void;
 };
 
-const Header: React.FC<HeaderProps> = ({ user, onLogout, onBecomePartner }) => {
+const Header: React.FC<HeaderProps> = ({ user, onLogout, onNavigate }) => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  if (!user) {
-    return null; // Не показываем хедер, если пользователь не залогинен
-  }
+  if (!user) return null;
 
-  const handleLogoutClick = () => {
-    setShowLogoutConfirm(true);
-  };
+  const handleLogoutClick = () => setShowLogoutConfirm(true);
 
   const renderTitle = () => {
     switch (user.type) {
@@ -48,28 +43,6 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onBecomePartner }) => {
     }
   };
 
-  const renderActions = () => {
-    switch (user.type) {
-      case "customer":
-        return (
-          <BurgerMenu
-            onBecomePartner={onBecomePartner}
-            onLogout={handleLogoutClick}
-          />
-        );
-      case "owner":
-      case "cashier":
-        return (
-          <BurgerMenu
-            onBecomePartner={onBecomePartner}
-            onLogout={handleLogoutClick}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <>
       <ConfirmationModal
@@ -77,11 +50,16 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout, onBecomePartner }) => {
         onClose={() => setShowLogoutConfirm(false)}
         onConfirm={onLogout}
         title="Подтверждение выхода"
-        message="Вы уверены, что хотите выйти из системы?"
+        message="Вы уверены, что хотите выйти?"
       />
       <header style={styles.header}>
         <h3 style={styles.title}>{renderTitle()}</h3>
-        <div>{renderActions()}</div>
+        {/* Всегда рендерим бургер-меню, если пользователь залогинен */}
+        <BurgerMenu
+          userType={user.type}
+          onNavigate={onNavigate}
+          onLogout={handleLogoutClick}
+        />
       </header>
     </>
   );
