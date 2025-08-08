@@ -17,7 +17,7 @@ export let clients: Client[] = [
     id: 1,
     businessId: 1,
     name: "Адиль А.",
-    phone: "77071234567",
+    phone: "77761156416",
     password: "123",
     balance: 227,
   },
