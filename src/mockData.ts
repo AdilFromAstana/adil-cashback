@@ -3,7 +3,7 @@ import type { Client, Business, Transaction } from "./types";
 export const businesses: Business[] = [
   {
     id: 1,
-    ownerLogin: "asel",
+    ownerLogin: "77761156416",
     ownerPassword: "123",
     cashierLogin: "cashier1",
     cashierPassword: "123",
