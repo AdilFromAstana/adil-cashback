@@ -8,13 +8,25 @@ export interface Business {
   cashbackPercentage: number;
 }
 
+export interface Shop {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+}
+
 export interface Client {
   id: number;
-  businessId: number; // В реальном приложении это будет таблица связей
   name: string;
   phone: string;
-  password: string; // Добавили пароль
-  balance: number;
+  email: string;
+}
+
+export interface Employee {
+  id: number;
+  name: string;
+  phone: string;
+  email: string;
 }
 
 export interface Transaction {
@@ -25,6 +37,18 @@ export interface Transaction {
   amount: number;
   purchaseAmount?: number;
   description: string;
+}
+
+export interface Wallet {
+  id: string;
+  shopId: string;
+  balance: string;
+  shop: {
+    id: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+  };
 }
 
 export type AuthenticatedUser =

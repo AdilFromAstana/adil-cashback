@@ -1,19 +1,15 @@
 import React from "react";
 import Button from "../component/Button";
 import Input from "../component/Input";
-
-type PartnerRegistrationPageProps = {
-  onBackToLogin: () => void;
-};
+import { useNavigate } from "react-router-dom";
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: { padding: "20px" },
   title: { textAlign: "center" },
 };
 
-const PartnerRegistrationPage: React.FC<PartnerRegistrationPageProps> = ({
-  onBackToLogin,
-}) => {
+const EmployeeRegistrationPage: React.FC = () => {
+  const nav = useNavigate();
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Стать партнером</h1>
@@ -26,13 +22,11 @@ const PartnerRegistrationPage: React.FC<PartnerRegistrationPageProps> = ({
       <Button
         onClick={() => {
           alert("Спасибо! Ваша заявка принята.");
-          onBackToLogin();
         }}
       >
         Отправить заявку
       </Button>
       <button
-        onClick={onBackToLogin}
         style={{
           width: "100%",
           background: "transparent",
@@ -41,6 +35,7 @@ const PartnerRegistrationPage: React.FC<PartnerRegistrationPageProps> = ({
           marginTop: "15px",
           cursor: "pointer",
         }}
+        onClick={() => nav("/login/client")}
       >
         Назад ко входу
       </button>
@@ -48,4 +43,4 @@ const PartnerRegistrationPage: React.FC<PartnerRegistrationPageProps> = ({
   );
 };
 
-export default PartnerRegistrationPage;
+export default EmployeeRegistrationPage;

@@ -10,7 +10,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     border: "1px solid #ccc",
     borderRadius: "8px",
     fontSize: "16px",
-    marginBottom: "15px",
   },
 };
 

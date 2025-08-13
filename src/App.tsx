@@ -1,141 +1,72 @@
-// src/App.tsx
-
-import React, { useState } from "react";
-import type { AuthenticatedUser, Client } from "./types";
-import { businesses, clients } from "./mockData";
-
-import Header from "./component/Header";
-import LoginPage from "./pages/LoginPage";
-import CustomerView from "./pages/CustomerView";
-import CashierView from "./pages/CashierView";
-import CustomerRegistrationPage from "./pages/CustomerRegistrationPage";
-import PartnerRegistrationPage from "./pages/PartnerRegistrationPage";
-import SettingsPage from "./pages/SettingsPage";
-import ClientsPage from "./pages/ClientsPage";
-import TxHistoryPage from "./pages/TxHistoryPage";
-
-export type ViewState =
-  | "login"
-  | "customer_dashboard"
-  | "cashier_dashboard"
-  | "customer_registration"
-  | "partner_registration"
-  | "settings"
-  | "shopping_list"
-  | "clients_list";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import {
+  guestRoutesWithRedirect,
+  cashierRoutesWithRedirect,
+  customerRoutesWithRedirect,
+} from "./routesConfig";
+import MainLayout from "./layouts/MainLayout";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { clientLogin } from "./store/slices/clientSlice";
+import { employeeLogin } from "./store/slices/employeeSlice";
+import type { RootState } from "./store/store";
 
 const App: React.FC = () => {
-  const [currentUser, setCurrentUser] = useState<AuthenticatedUser | null>(
-    null
+  const dispatch = useDispatch();
+  const { user: client } = useSelector((state: RootState) => state.client);
+  const { user: employee } = useSelector((state: RootState) => state.employee);
+  const user = client || employee;
+  const accessToken = localStorage.getItem("accessToken");
+  const lastEnterAs = localStorage.getItem("lastEnterAs") || "customer";
+  const [loading, setLoading] = useState(true);
+  console.log("loading: ", loading);
+
+  const routes = useMemo(
+    () =>
+      user
+        ? client
+          ? customerRoutesWithRedirect
+          : cashierRoutesWithRedirect
+        : guestRoutesWithRedirect,
+    [user, client]
   );
-  const [view, setView] = useState<ViewState>("login");
 
-  const handleLogin = (
-    login: string,
-    password: string,
-    type: "customer" | "business"
-  ): AuthenticatedUser | null => {
-    let user: AuthenticatedUser | undefined;
-    if (type === "customer") {
-      const foundClient = clients.find(
-        (c) =>
-          c.phone.includes(login.replace(/\D/g, "").slice(-10)) &&
-          c.password === password
-      );
-      if (foundClient) {
-        user = { type: "customer", data: foundClient };
-        setView("customer_dashboard");
-      }
+  useEffect(() => {
+    if (accessToken) {
+      axios
+        .post("https://d10271f8f0e4.ngrok-free.app/auth/refresh", {
+          accessToken,
+          lastEnterAs,
+        })
+        .then((res) => {
+          if (res.data.roles.includes("customer")) {
+            dispatch(clientLogin(res.data));
+          } else if (res.data.roles.includes("cashier")) {
+            dispatch(employeeLogin(res.data));
+          }
+        })
+        .catch(() => {
+          localStorage.removeItem("accessToken");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     } else {
-      const foundOwner = businesses.find(
-        (b) => b.ownerLogin === login && b.ownerPassword === password
-      );
-      if (foundOwner) {
-        user = { type: "owner", data: foundOwner };
-        setView("cashier_dashboard");
-      } else {
-        const foundCashier = businesses.find(
-          (b) => b.cashierLogin === login && b.cashierPassword === password
-        );
-        if (foundCashier) {
-          user = { type: "cashier", data: foundCashier };
-          setView("cashier_dashboard");
-        }
-      }
+      setLoading(false);
     }
-    if (user) {
-      setCurrentUser(user);
-      return user;
-    }
-    return null;
-  };
-
-  const handleLogout = () => {
-    setCurrentUser(null);
-    setView("login");
-  };
-
-  const renderContent = () => {
-    if (currentUser) {
-      switch (view) {
-        case "customer_dashboard":
-          return <CustomerView customer={currentUser.data as any} />;
-        case "cashier_dashboard":
-          return <CashierView business={currentUser.data as any} />;
-        case "settings":
-          const goBackToDashboard = () => {
-            if (currentUser.type === "customer") setView("customer_dashboard");
-            if (currentUser.type === "owner") setView("cashier_dashboard");
-            if (currentUser.type === "cashier") setView("cashier_dashboard");
-          };
-          return <SettingsPage onBack={goBackToDashboard} />;
-        case "shopping_list":
-          return <TxHistoryPage customer={currentUser.data as Client} />;
-        case "partner_registration":
-          return <PartnerRegistrationPage onBackToLogin={handleLogout} />;
-        case "clients_list":
-          return <ClientsPage />;
-        default:
-          if (currentUser.type === "customer") setView("customer_dashboard");
-          if (currentUser.type === "owner") setView("cashier_dashboard");
-          if (currentUser.type === "cashier") setView("cashier_dashboard");
-          return null;
-      }
-    }
-
-    switch (view) {
-      case "customer_registration":
-        return (
-          <CustomerRegistrationPage onBackToLogin={() => setView("login")} />
-        );
-      case "partner_registration":
-        return (
-          <PartnerRegistrationPage onBackToLogin={() => setView("login")} />
-        );
-      default:
-        return (
-          <LoginPage
-            onLogin={handleLogin}
-            onNavigateToCustomerRegistration={() =>
-              setView("customer_registration")
-            }
-            onNavigateToPartnerRegistration={() =>
-              setView("partner_registration")
-            }
-          />
-        );
-    }
-  };
+  }, []);
 
   return (
-    <div>
-      <Header
-        user={currentUser}
-        onLogout={handleLogout}
-        onNavigate={setView} // Передаем одну функцию для всей навигации
-      />
-      {renderContent()}
-    </div>
+    <Suspense fallback="Загрузка">
+      <Routes>
+        <Route element={<MainLayout routes={routes} />}>
+          {routes.map((route) => (
+            <Route key={route.path} path={route.path} element={route.element} />
+          ))}
+        </Route>
+      </Routes>
+    </Suspense>
   );
 };
 

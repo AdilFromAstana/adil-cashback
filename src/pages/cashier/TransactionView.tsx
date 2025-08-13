@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { Business, Client } from "../../types";
+import type { Business } from "../../types";
 import Button from "../../component/Button";
 import Input from "../../component/Input";
 import BottomSheet from "../../component/BottomSheet";
@@ -26,7 +26,7 @@ const styles = {
 } as const;
 
 type TransactionViewProps = {
-  client: Client;
+  client: User;
   business: Business;
   onComplete: (message: string) => void;
   onChangeClient: () => void;

@@ -1,25 +1,27 @@
 import React, { useEffect, useState, useRef } from "react";
 
-interface BottomSheetProps {
-  isOpen: boolean;
+type Shop = {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+};
+
+interface ShopDetailsModalProps {
+  shop: Shop;
   onClose: () => void;
-  children: React.ReactNode;
-  height?: string; // например, "75vh"
 }
 
 const SWIPE_THRESHOLD = 100;
 
-const BottomSheet: React.FC<BottomSheetProps> = ({
-  isOpen,
+const ShopDetailsModal: React.FC<ShopDetailsModalProps> = ({
+  shop,
   onClose,
-  children,
-  height,
 }) => {
   const [visible, setVisible] = useState(false);
-  const [shouldRender, setShouldRender] = useState(isOpen);
+  const [shouldRender, setShouldRender] = useState(true);
   const touchStartY = useRef<number | null>(null);
   const currentTranslateY = useRef(0);
-  const modalRef = useRef<HTMLDivElement>(null);
 
   const handleClose = () => {
     setVisible(false);
@@ -36,17 +38,20 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     touchStartY.current = e.touches[0].clientY;
   };
 
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     if (touchStartY.current === null || !modalRef.current) return;
 
     const currentY = e.touches[0].clientY;
     const diff = currentY - touchStartY.current;
 
+    // Разрешаем свайп вниз только если скролл у модалки на 0 (т.е. верх)
     if (diff > 0 && modalRef.current.scrollTop === 0) {
       currentTranslateY.current = diff;
       e.currentTarget.style.transform = `translateY(${diff}px)`;
       e.currentTarget.style.transition = "none";
-      e.preventDefault();
+      e.preventDefault(); // отменяем скролл страницы/модалки
     }
   };
 
@@ -62,19 +67,21 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   };
 
   useEffect(() => {
-    if (isOpen) {
-      setShouldRender(true);
-      requestAnimationFrame(() => setVisible(true));
-    } else {
+    setVisible(true);
+    return () => {
+      touchStartY.current = null;
+      currentTranslateY.current = 0;
       setVisible(false);
-    }
-  }, [isOpen]);
+      setShouldRender(true);
+    };
+  }, []);
 
   if (!shouldRender) return null;
 
   return (
     <>
       <div
+        id="card-background"
         style={{
           position: "fixed",
           top: 0,
@@ -89,7 +96,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         }}
         onClick={handleClose}
       />
-
       <div
         ref={modalRef}
         style={{
@@ -97,9 +103,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           bottom: 0,
           left: 0,
           width: "100vw",
-          height: height ?? "auto",
-          maxHeight: "90vh",
-          backgroundColor: "#335b45",
+          height: "75vh",
+          backgroundColor: "white",
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           padding: 20,
@@ -109,19 +114,21 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           transform: visible ? "translateY(0)" : "translateY(100%)",
           transition: "transform 300ms ease",
           touchAction: "none",
-          display: "flex",
-          flexDirection: "column",
-          gap: 20,
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onTransitionEnd={onTransitionEnd}
       >
-        {children}
+        <h2>{shop.name}</h2>
+        <p>Широта: {shop.latitude}</p>
+        <p>Долгота: {shop.longitude}</p>
+        <a href="https://go.2gis.com/qb05s" target="_blank">
+          Открыть в 2ГИС
+        </a>
       </div>
     </>
   );
 };
 
-export default BottomSheet;
+export default ShopDetailsModal;

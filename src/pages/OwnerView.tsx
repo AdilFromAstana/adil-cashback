@@ -1,12 +1,6 @@
 import React, { useState } from "react";
+import CashierPage from "./CashierPage";
 import type { Business, Client } from "../types";
-import CashierView from "./CashierView";
-
-// Пропсы теперь не содержат onLogout
-type OwnerViewProps = {
-  business: Business;
-  clients: Client[];
-};
 
 // Стили немного упрощаются
 const styles: { [key: string]: React.CSSProperties } = {
@@ -68,7 +62,28 @@ const styles: { [key: string]: React.CSSProperties } = {
   activeNavItem: { color: "#007AFF", borderBottom: "2px solid #007AFF" },
 };
 
-const OwnerView: React.FC<OwnerViewProps> = ({ business, clients }) => {
+const OwnerView: React.FC = () => {
+  const business: Business = {
+    id: 1,
+    ownerLogin: "77761156416",
+    ownerPassword: "123",
+    cashierLogin: "cashier1",
+    cashierPassword: "123",
+    name: "Минимаркет 'Алишер'",
+    cashbackPercentage: 5,
+  };
+
+  const clients: Client[] = [
+    {
+      id: 1,
+      businessId: 1,
+      name: "Адиль А.",
+      phone: "77761156416",
+      password: "123",
+      balance: 227,
+    },
+  ];
+
   const [mode, setMode] = useState<"dashboard" | "cashier">("dashboard");
 
   return (
@@ -128,7 +143,7 @@ const OwnerView: React.FC<OwnerViewProps> = ({ business, clients }) => {
         </div>
       ) : (
         // onLogout здесь не нужен, так как хедер теперь общий
-        <CashierView business={business} />
+        <CashierPage business={business} />
       )}
     </div>
   );

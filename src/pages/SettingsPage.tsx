@@ -18,11 +18,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-type SettingsPageProps = {
-  onBack: () => void;
-};
-
-const SettingsPage: React.FC<SettingsPageProps> = ({ onBack }) => {
+const SettingsPage: React.FC = () => {
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Настройки</h1>
@@ -32,7 +28,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onBack }) => {
       <div style={styles.settingItem}>Язык</div>
 
       <div style={{ marginTop: "40px" }}>
-        <Button onClick={onBack} type="secondary">
+        <Button onClick={() => null} type="secondary">
           Назад
         </Button>
       </div>

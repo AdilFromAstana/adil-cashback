@@ -43,7 +43,7 @@ export const FindClientView: React.FC<FindClientViewProps> = ({
         </>
       ) : (
         <>
-          <PhoneInput
+          {/* <PhoneInput
             country={"kz"} // Устанавливаем Казахстан по умолчанию
             countryCodeEditable={false}
             alwaysDefaultMask={true}
@@ -70,7 +70,7 @@ export const FindClientView: React.FC<FindClientViewProps> = ({
           <Button onClick={onFindByPhone} type="secondary">
             Найти по номеру
           </Button>
-          <Divider>или</Divider>
+          <Divider>или</Divider> */}
           <Button onClick={onShowScanner}>Сканировать QR-код</Button>
         </>
       )}
