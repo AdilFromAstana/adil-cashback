@@ -15,11 +15,9 @@ export const businesses: Business[] = [
 export let clients: Client[] = [
   {
     id: 1,
-    businessId: 1,
     name: "Адиль А.",
     phone: "77761156416",
-    password: "123",
-    balance: 227,
+    email: "laliga2017@mail.ru",
   },
 ];
 
@@ -76,7 +74,6 @@ export const updateClientBalance = (
 ): boolean => {
   const clientIndex = clients.findIndex((c) => c.id === clientId);
   if (clientIndex !== -1) {
-    clients[clientIndex].balance = newBalance;
     console.log(`New balance for client ${clientId}: ${newBalance}`);
     return true;
   }

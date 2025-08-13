@@ -83,11 +83,6 @@ const WalletInfoPage: React.FC = () => {
     }
   }, [activeTab, startDate, endDate]);
 
-  const handleDateRangeChange = (start: string, end: string) => {
-    setStartDate(start);
-    setEndDate(end);
-  };
-
   return (
     <div
       style={{
