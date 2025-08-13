@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import ShopsList from "./ShopsList"; // ваш список (адаптируем ниже)
 import ShopsMap from "./ShopsMap"; // карта (адаптируем ниже)
+import api from "../../api/axiosInstance";
 
 const styles = {
   container: {
@@ -56,8 +56,8 @@ const ShopsPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
   useEffect(() => {
-    axios
-      .get("https://d10271f8f0e4.ngrok-free.app/shops")
+    api
+      .get("/shops")
       .then((res) => {
         setShops(res.data);
       })

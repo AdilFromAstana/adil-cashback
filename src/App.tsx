@@ -6,11 +6,11 @@ import {
   customerRoutesWithRedirect,
 } from "./routesConfig";
 import MainLayout from "./layouts/MainLayout";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { clientLogin } from "./store/slices/clientSlice";
 import { employeeLogin } from "./store/slices/employeeSlice";
 import type { RootState } from "./store/store";
+import api from "./api/axiosInstance";
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -34,8 +34,8 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (accessToken) {
-      axios
-        .post("https://d10271f8f0e4.ngrok-free.app/auth/refresh", {
+      api
+        .post("/auth/refresh", {
           accessToken,
           lastEnterAs,
         })

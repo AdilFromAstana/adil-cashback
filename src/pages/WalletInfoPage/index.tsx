@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import type { Wallet } from "../../types";
 import WalletHeader from "./WalletHeader";
@@ -7,6 +6,7 @@ import WalletTabs from "./WalletTabs";
 import WalletQRCodeView from "./WalletQRCodeView";
 import WalletTransactionsList from "./WalletTransactionsList";
 import DateRangePicker from "./DateRangePicker";
+import api from "../../api/axiosInstance";
 
 interface Transaction {
   id: string;
@@ -37,9 +37,7 @@ const WalletInfoPage: React.FC = () => {
   const getWallet = async () => {
     try {
       setLoadingWallet(true);
-      const res = await axios.get(
-        `https://d10271f8f0e4.ngrok-free.app/wallets/${walletId}`
-      );
+      const res = await api.get(`/wallets/${walletId}`);
       setWallet(res.data);
     } catch {
       setError("Не удалось загрузить данные кошелька");
@@ -54,15 +52,12 @@ const WalletInfoPage: React.FC = () => {
   ) => {
     try {
       setLoadingTx(true);
-      const res = await axios.get(
-        `https://d10271f8f0e4.ngrok-free.app/wallets/${walletId}/transactions`,
-        {
-          params: {
-            startDate: start,
-            endDate: end,
-          },
-        }
-      );
+      const res = await api.get(`/wallets/${walletId}/transactions`, {
+        params: {
+          startDate: start,
+          endDate: end,
+        },
+      });
       setTransactions(res.data);
     } catch {
       setError("Не удалось загрузить транзакции");

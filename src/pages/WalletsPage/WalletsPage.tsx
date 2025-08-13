@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import type { Wallet } from "../../types";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
 import WalletCard from "./WalletCard";
 import WalletCardSkeleton from "./WalletCardSkeleton";
+import api from "../../api/axiosInstance";
 
 const WalletsPage: React.FC = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -19,14 +19,11 @@ const WalletsPage: React.FC = () => {
       setLoading(true);
       setError("");
       try {
-        const res = await axios.get(
-          `https://d10271f8f0e4.ngrok-free.app/wallets/user/${user.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
-          }
-        );
+        const res = await api.get(`/wallets/user/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        });
         setWallets(res.data);
       } catch (err) {
         console.error("Ошибка загрузки данных:", err);

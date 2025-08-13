@@ -4,6 +4,7 @@ import axios from "axios";
 import Button from "../component/Button";
 import { useDispatch } from "react-redux";
 import { clientLogin } from "../store/slices/clientSlice";
+import api from "../api/axiosInstance";
 
 const styles = {
   container: {
@@ -51,10 +52,7 @@ const ConfirmCustomerPage: React.FC = () => {
 
     const confirmAccount = async () => {
       try {
-        const res = await axios.post(
-          "https://d10271f8f0e4.ngrok-free.app/auth/confirm/customer",
-          { token }
-        );
+        const res = await api.post("/auth/confirm/customer", { token });
 
         const { user, accessToken, walletId, roles } = res.data;
 

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useSwipeable } from "react-swipeable";
 import { QRCodeSVG } from "qrcode.react";
-import axios from "axios";
 import type { Wallet, Transaction } from "../types";
 import { formatDate } from "../utils/formatDate";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
+import api from "../api/axiosInstance";
 
 const styles = {
   container: { padding: "20px", userSelect: "none" },
@@ -94,7 +94,6 @@ const TransactionHistory: React.FC<{ transactions: Transaction[] }> = ({
   );
 };
 
-// --- Основной компонент ---
 const CustomerView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"card" | "history">("card");
   const { shopId } = useParams<{ shopId: string }>();
@@ -112,12 +111,7 @@ const CustomerView: React.FC = () => {
       setLoading(true);
       setError("");
       try {
-        const walletResponse = await axios.get(
-          `https://d10271f8f0e4.ngrok-free.app/wallets/${user.id}`,
-          {
-            // headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-          }
-        );
+        const walletResponse = await api.get(`/wallets/${user.id}`);
         setWallet(walletResponse.data);
       } catch (err) {
         console.error("Ошибка загрузки данных:", err);

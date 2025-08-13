@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { employeeLogin } from "../store/slices/employeeSlice";
+import api from "../api/axiosInstance";
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: { padding: "20px" },
@@ -45,10 +46,10 @@ const EmployeeLoginPage: React.FC = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await axios.post(
-        "https://d10271f8f0e4.ngrok-free.app/auth/login/customer",
-        { email: login, password }
-      );
+      const response = await api.post("/auth/login/customer", {
+        email: login,
+        password,
+      });
 
       const { user, accessToken, roles } = response.data;
 

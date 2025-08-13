@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { validateEmail } from "../utils/validateEmail";
+import api from "../api/axiosInstance";
 
 interface Form {
   email: string;
@@ -78,8 +79,8 @@ export const useRegistrationForm = (): UseRegistrationFormReturn => {
 
   useEffect(() => {
     if (shopId) {
-      axios
-        .get(`https://d10271f8f0e4.ngrok-free.app/shops/${shopId}`)
+      api
+        .get(`/shops/${shopId}`)
         .then((res) => setShopName(res.data.name))
         .catch(() => setShopName(`ID: ${shopId}`))
         .finally(() => setShopNameLoading(false));
@@ -103,10 +104,7 @@ export const useRegistrationForm = (): UseRegistrationFormReturn => {
         invitedByShopId: Number(shopId),
         registrationType: shopId ? "shop" : "self",
       };
-      const res = await axios.post(
-        "https://d10271f8f0e4.ngrok-free.app/auth/register/customer",
-        payload
-      );
+      const res = await api.post("/auth/register/customer", payload);
       if (res.status === 201) {
         setSuccessMessage(
           "Регистрация успешна! Подтвердите аккаунт через письмо на вашей почте."
