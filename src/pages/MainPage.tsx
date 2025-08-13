@@ -180,7 +180,7 @@ const styles = {
 };
 
 export default function CashbackPage() {
-  const [lang, setLang] = useState<"ru" | "kk">("ru");
+  const [lang] = useState<"ru" | "kk">("ru");
   const t = content[lang];
   const nav = useNavigate();
 

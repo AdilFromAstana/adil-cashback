@@ -1,8 +1,5 @@
 import React from "react";
 import Button from "../../component/Button";
-import Divider from "../../component/Divider";
-
-import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 type FindClientViewProps = {
@@ -23,9 +20,6 @@ const styles = {
 };
 
 export const FindClientView: React.FC<FindClientViewProps> = ({
-  phone,
-  onPhoneChange,
-  onFindByPhone,
   onShowScanner,
   showScanner,
 }) => {

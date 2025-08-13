@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Button from "../component/Button";
 import Input from "../component/Input";
-import PhoneInput from "react-phone-input-2";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
@@ -41,7 +40,7 @@ const EmployeeLoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
+  console.log(loading);
   const handleLogin = async () => {
     setLoading(true);
     setError("");
