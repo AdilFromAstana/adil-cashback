@@ -2,12 +2,6 @@ import React, { useState, useEffect } from "react";
 import BottomSheet from "../../component/BottomSheet";
 import Arrow from "../../component/Arrow";
 
-function formatDateToDayMonth(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleString("ru-RU", { day: "numeric", month: "long" });
-}
-
-// Форматирует диапазон дат в "1 августа — 9 августа"
 function formatRange(start: string, end: string): string {
   const startDate = new Date(start);
   const endDate = new Date(end);

@@ -100,7 +100,7 @@ const CustomerView: React.FC = () => {
   const { shopId } = useParams<{ shopId: string }>();
 
   const [wallet, setWallet] = useState<Wallet | null>(null);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { user } = useSelector((state: RootState) => state.client);

@@ -76,11 +76,9 @@ const OwnerView: React.FC = () => {
   const clients: Client[] = [
     {
       id: 1,
-      businessId: 1,
       name: "Адиль А.",
       phone: "77761156416",
-      password: "123",
-      balance: 227,
+      email: "",
     },
   ];
 
@@ -116,7 +114,7 @@ const OwnerView: React.FC = () => {
           <h3>База клиентов</h3>
           <ul style={styles.clientList}>
             {clients
-              .filter((c) => c.businessId === business.id)
+              .filter((c) => c.id === business.id)
               .map((client) => (
                 <li key={client.id} style={styles.clientItem}>
                   <div>
@@ -125,9 +123,7 @@ const OwnerView: React.FC = () => {
                       +{client.phone}
                     </div>
                   </div>
-                  <div style={styles.clientBalance}>
-                    {client.balance} бонусов
-                  </div>
+                  <div style={styles.clientBalance}>бонусов</div>
                 </li>
               ))}
           </ul>
@@ -143,7 +139,7 @@ const OwnerView: React.FC = () => {
         </div>
       ) : (
         // onLogout здесь не нужен, так как хедер теперь общий
-        <CashierPage business={business} />
+        <CashierPage />
       )}
     </div>
   );

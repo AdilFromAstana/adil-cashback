@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { Business } from "../../types";
+import type { Business, Client } from "../../types";
 import Button from "../../component/Button";
 import Input from "../../component/Input";
 import BottomSheet from "../../component/BottomSheet";
@@ -26,7 +26,7 @@ const styles = {
 } as const;
 
 type TransactionViewProps = {
-  client: User;
+  client: Client;
   business: Business;
   onComplete: (message: string) => void;
   onChangeClient: () => void;
@@ -50,18 +50,18 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
 
   const handleAccrue = () => {
     const cashback = calculatedCashback;
-    const newBalance = client.balance + cashback;
+    const newBalance = client.id + cashback;
     onComplete(`Начислено: ${cashback}. Новый баланс: ${newBalance}`);
   };
 
   const handleRedeem = () => {
     // ... (логика списания, такая же как была)
     const redeem = parseFloat(redeemAmount);
-    if (redeem > client.balance) {
+    if (redeem > client.id) {
       alert("Недостаточно бонусов!");
       return;
     }
-    const newBalance = client.balance - redeem;
+    const newBalance = client.id - redeem;
     // updateClientBalance(client.id, newBalance);
     onComplete(`Списано: ${redeem}. Новый баланс: ${newBalance}`);
   };
@@ -73,7 +73,7 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
           {client.name}
         </p>
         <p style={{ margin: "8px 0 0", color: "#666", fontSize: "18px" }}>
-          Баланс: {client.balance} бонусов
+          Баланс: бонусов
         </p>
       </div>
       <div style={styles.actionsContainer}>
@@ -131,11 +131,11 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
       >
         <h3 style={styles.sheetTitle}>Списание бонусов</h3>
         <Button
-          onClick={() => setRedeemAmount(String(client.balance || 0))}
+          onClick={() => setRedeemAmount(String(0))}
           type="secondary"
           style={{ marginBottom: "15px", background: "#eee", color: "#333" }}
         >
-          Списать всё ({client.balance} бонусов)
+          Списать всё ( бонусов)
         </Button>
         <Input
           type="tel"

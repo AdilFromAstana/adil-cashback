@@ -114,7 +114,6 @@ const ClientDetailView: React.FC<{ client: Client; onBack: () => void }> = ({
           <p style={styles.statLabel}>Средний чек</p>
         </div>
         <div style={styles.statCard}>
-          <p style={styles.statValue}>{client.balance}</p>
           <p style={styles.statLabel}>Текущий баланс</p>
         </div>
         <div style={styles.statCard}>
@@ -189,7 +188,7 @@ const ClientsPage = () => {
                 +{client.phone}
               </div>
             </div>
-            <div style={styles.clientBalance}>{client.balance} бонусов</div>
+            <div style={styles.clientBalance}> бонусов</div>
           </div>
         ))}
       </div>

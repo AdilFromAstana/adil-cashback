@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import { DivIcon } from "leaflet";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import ShopDetailsModal from "./ShopDetailsModal";
