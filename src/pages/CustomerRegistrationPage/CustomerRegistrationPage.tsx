@@ -17,7 +17,6 @@ const styles = {
     padding: 20,
     borderRadius: 12,
     textAlign: "center",
-    minHeight: "100vh",
     color: colors.textLight,
   },
   title: {
