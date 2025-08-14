@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import type { Business, Client } from "../../types";
+import type { Wallet } from "../../types";
 import Button from "../../component/Button";
 import Input from "../../component/Input";
 import BottomSheet from "../../component/BottomSheet";
+import api from "../../api/axiosInstance";
 
 const styles = {
   clientInfoCard: {
@@ -26,56 +27,87 @@ const styles = {
 } as const;
 
 type TransactionViewProps = {
-  client: Client;
-  business: Business;
+  wallet: Wallet;
   onComplete: (message: string) => void;
-  onChangeClient: () => void;
+  onChangeWallet: () => void;
 };
 
 export const TransactionView: React.FC<TransactionViewProps> = ({
-  client,
-  business,
+  wallet,
   onComplete,
-  onChangeClient,
+  onChangeWallet,
 }) => {
   const [purchaseAmount, setPurchaseAmount] = useState("");
   const [redeemAmount, setRedeemAmount] = useState("");
   const [sheetState, setSheetState] = useState<"closed" | "accrue" | "redeem">(
     "closed"
   );
+  const [balance, setBalance] = useState(parseFloat(wallet.balance));
 
   const calculatedCashback = Math.floor(
-    (parseFloat(purchaseAmount) || 0) * (business.cashbackPercentage / 100)
+    (parseFloat(purchaseAmount) || 0) * (wallet.shop.cashbackPercent / 100)
   );
 
-  const handleAccrue = () => {
-    const cashback = calculatedCashback;
-    const newBalance = client.id + cashback;
-    onComplete(`Начислено: ${cashback}. Новый баланс: ${newBalance}`);
+  const handleAccrue = async () => {
+    const amount = parseFloat(purchaseAmount);
+    if (!amount || amount <= 0) return alert("Введите корректную сумму");
+
+    try {
+      const response = await api.post("http://localhost:3000/wallets/credit", {
+        walletId: wallet.id,
+        userId: wallet.user.id,
+        shopId: wallet.shop.id,
+        purchaseAmount: amount,
+        description: "Начисление бонусов",
+      });
+      const newBalance = parseFloat(response.data.balance);
+      setBalance(newBalance);
+      onComplete(
+        `Начислено: ${calculatedCashback}. Новый баланс: ${newBalance}`
+      );
+      setSheetState("closed");
+      setPurchaseAmount("");
+    } catch (err) {
+      console.error(err);
+      alert("Ошибка при начислении бонусов");
+    }
   };
 
-  const handleRedeem = () => {
-    // ... (логика списания, такая же как была)
+  const handleRedeem = async () => {
     const redeem = parseFloat(redeemAmount);
-    if (redeem > client.id) {
-      alert("Недостаточно бонусов!");
-      return;
+    if (!redeem || redeem <= 0) return alert("Введите корректную сумму");
+    if (redeem > balance) return alert("Недостаточно бонусов");
+
+    try {
+      const response = await api.post("http://localhost:3000/wallets/debit", {
+        walletId: wallet.id,
+        userId: wallet.user.id,
+        shopId: wallet.shop.id,
+        cashbackAmount: redeem,
+        description: "Списание бонусов",
+      });
+      const newBalance = parseFloat(response.data.balance);
+      setBalance(newBalance);
+      onComplete(`Списано: ${redeem}. Новый баланс: ${newBalance}`);
+      setSheetState("closed");
+      setRedeemAmount("");
+    } catch (err) {
+      console.error(err);
+      alert("Ошибка при списании бонусов");
     }
-    const newBalance = client.id - redeem;
-    // updateClientBalance(client.id, newBalance);
-    onComplete(`Списано: ${redeem}. Новый баланс: ${newBalance}`);
   };
 
   return (
     <div>
       <div style={styles.clientInfoCard}>
         <p style={{ margin: 0, fontWeight: "bold", fontSize: "20px" }}>
-          {client.name}
+          {wallet.user.name || wallet.user.email}
         </p>
         <p style={{ margin: "8px 0 0", color: "#666", fontSize: "18px" }}>
-          Баланс: бонусов
+          Баланс: {balance.toFixed(2)} бонусов
         </p>
       </div>
+
       <div style={styles.actionsContainer}>
         <Button
           onClick={() => setSheetState("accrue")}
@@ -92,8 +124,9 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
           Списать
         </Button>
       </div>
+
       <button
-        onClick={onChangeClient}
+        onClick={onChangeWallet}
         style={{
           width: "100%",
           background: "transparent",
@@ -131,11 +164,11 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
       >
         <h3 style={styles.sheetTitle}>Списание бонусов</h3>
         <Button
-          onClick={() => setRedeemAmount(String(0))}
+          onClick={() => setRedeemAmount(balance.toString())}
           type="secondary"
           style={{ marginBottom: "15px", background: "#eee", color: "#333" }}
         >
-          Списать всё ( бонусов)
+          Списать всё ({balance.toFixed(2)} бонусов)
         </Button>
         <Input
           type="tel"

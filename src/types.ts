@@ -39,17 +39,20 @@ export interface Transaction {
   description: string;
 }
 
-export interface Wallet {
-  id: string;
-  shopId: string;
-  balance: string;
-  shop: {
-    id: string;
-    name: string;
-    description: string;
-    imageUrl: string;
+export type Wallet = {
+  id: number;
+  user: {
+    id: number;
+    name: string | null;
+    email: string;
   };
-}
+  shop: {
+    id: number;
+    name: string;
+    cashbackPercent: number;
+  };
+  balance: string; // "0.00"
+};
 
 export type AuthenticatedUser =
   | { type: "owner"; data: Business }
