@@ -46,7 +46,7 @@ const EmployeeLoginPage: React.FC = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await api.post("/auth/login/customer", {
+      const response = await api.post("/auth/login/employee", {
         email: login,
         password,
       });
