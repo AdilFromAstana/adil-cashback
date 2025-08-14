@@ -52,7 +52,10 @@ const WalletHeader: React.FC<Props> = ({ wallet }) => {
       </div>
 
       <img
-        src={wallet.shop.imageUrl}
+        src={
+          wallet.shop.imageUrl ||
+          "https://static.vecteezy.com/system/resources/previews/013/043/580/non_2x/store-icon-template-vector.jpg"
+        }
         alt={wallet.shop.name}
         style={{
           width: "25vw",
