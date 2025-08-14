@@ -13,6 +13,7 @@ import ProfilePage from "./pages/ProfilePage";
 import type { Role } from "./store/slices/clientSlice";
 import BecomePartnerPage from "./pages/BecomePartnerPage";
 import { Navigate } from "react-router-dom";
+import ConfirmCustomerPage from "./pages/ConfirmCustomerPage";
 
 export interface AppRoute {
   path: string;
@@ -139,6 +140,13 @@ const guestRoutes: AppRoute[] = [
     element: <CustomerRegistrationPage />,
     label: "Регистрация",
     showInMenu: true,
+    roles: [],
+  },
+  {
+    path: "/confirm/customer",
+    element: <ConfirmCustomerPage />,
+    label: "Подтверждение",
+    showInMenu: false,
     roles: [],
   },
 ];
