@@ -89,7 +89,8 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
         cashbackAmount: redeem,
         description: "Списание бонусов",
       });
-      const newBalance = parseFloat(response.data.balance);
+
+      const newBalance = parseFloat(response.data.wallet.balance); // <- исправлено
       setBalance(newBalance);
       onComplete(`Списано: ${redeem}. Новый баланс: ${newBalance}`);
       setSheetState("closed");
