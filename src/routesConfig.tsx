@@ -1,8 +1,6 @@
 import CustomerRegistrationPage from "./pages/CustomerRegistrationPage/CustomerRegistrationPage";
 import ShopsListPage from "./pages/ShopPage";
-import CustomerView from "./pages/CustomerView";
 import CashierPage from "./pages/CashierPage";
-import ClientsPage from "./pages/ClientsPage";
 import SettingsPage from "./pages/SettingsPage";
 import MainPage from "./pages/MainPage";
 import CustomerLoginPage from "./pages/CustomerLoginPage";
@@ -45,13 +43,13 @@ const customerRoutes: AppRoute[] = [
     showInMenu: true,
     roles: ["customer"],
   },
-  {
-    path: "/shops/:shopId",
-    element: <CustomerView />,
-    label: "Просмотр магазина",
-    showInMenu: false,
-    roles: ["customer"],
-  },
+  // {
+  //   path: "/shops/:shopId",
+  //   element: <CustomerView />,
+  //   label: "Просмотр магазина",
+  //   showInMenu: false,
+  //   roles: ["customer"],
+  // },
   {
     path: "/becomePartner",
     element: <BecomePartnerPage />,
@@ -83,13 +81,13 @@ const cashierRoutes: AppRoute[] = [
     showInMenu: true,
     roles: ["cashier"],
   },
-  {
-    path: "/clients",
-    element: <ClientsPage />,
-    label: "Клиенты",
-    showInMenu: true,
-    roles: ["cashier"],
-  },
+  // {
+  //   path: "/clients",
+  //   element: <ClientsPage />,
+  //   label: "Клиенты",
+  //   showInMenu: true,
+  //   roles: ["cashier"],
+  // },
   {
     path: "/profile",
     element: <ProfilePage />,
