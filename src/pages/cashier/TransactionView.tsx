@@ -53,7 +53,7 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
     if (!amount || amount <= 0) return alert("Введите корректную сумму");
 
     try {
-      const response = await api.post("http://localhost:3000/wallets/credit", {
+      const response = await api.post("/wallets/credit", {
         walletId: wallet.id,
         userId: wallet.user.id,
         shopId: wallet.shop.id,
@@ -79,7 +79,7 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
     if (redeem > balance) return alert("Недостаточно бонусов");
 
     try {
-      const response = await api.post("http://localhost:3000/wallets/debit", {
+      const response = await api.post("/wallets/debit", {
         walletId: wallet.id,
         userId: wallet.user.id,
         shopId: wallet.shop.id,

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Button from "../component/Button";
 import FloatingInput from "../component/FloatingInput";
-import axios from "axios";
+import api from "../api/axiosInstance";
 
 const BecomePartnerPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -43,15 +43,11 @@ const BecomePartnerPage: React.FC = () => {
     }
 
     try {
-      const res = await axios.post(
-        "http://localhost:3000/shops/create",
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await api.post("/shops/create", formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       console.log("Shop created:", res.data);
       alert("Заявка отправлена успешно");

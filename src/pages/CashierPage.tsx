@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 // import QrScanner from "qr-scanner";
-import axios from "axios";
 import type { Wallet } from "../types";
 import { TransactionView } from "./cashier/TransactionView";
+import api from "../api/axiosInstance";
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: { padding: "20px" },
@@ -70,9 +70,7 @@ const CashierPage: React.FC = () => {
 
   const fetchWallet = async (walletId: number) => {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/wallets/${walletId}`
-      );
+      const response = await api.get(`/wallets/${walletId}`);
       setSelectedWallet(response.data);
     } catch (err) {
       console.error("Ошибка получения кошелька", err);

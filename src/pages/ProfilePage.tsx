@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
+import api from "../api/axiosInstance";
 
 const styles = {
   container: {
@@ -47,7 +47,7 @@ const ProfilePage: React.FC = () => {
     }
     try {
       setLoading(true);
-      await axios.post("http://localhost:3000/profile/change-password", {
+      await api.post("/profile/change-password", {
         oldPassword,
         newPassword,
       });
