@@ -50,6 +50,7 @@ export type Wallet = {
     id: number;
     name: string;
     cashbackPercent: number;
+    imageUrl: string | null;
   };
   balance: string; // "0.00"
 };

@@ -15,7 +15,14 @@ const WalletQRCodeView: React.FC<Props> = ({ wallet, loading }) => {
     <div
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
-      {wallet.id && <QRCode value={wallet.id} width="100%" />}
+      {wallet.id && (
+        <QRCode
+          value={JSON.stringify({
+            walletId: wallet.id,
+          })}
+          width={256}
+        />
+      )}
     </div>
   );
 };
