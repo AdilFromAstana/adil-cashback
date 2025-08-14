@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Button from "../../component/Button";
 import "react-phone-input-2/lib/style.css";
+import QrScanner from "qr-scanner";
 
 type FindClientViewProps = {
   phone: string;
   onPhoneChange: (value: string) => void;
   onFindByPhone: () => void;
-  onShowScanner: () => void;
   showScanner: boolean;
+  setShowScanner: (value: boolean) => void;
+  onWalletDetected: (walletId: number) => void;
 };
 
 const styles = {
@@ -16,56 +18,82 @@ const styles = {
     maxWidth: "400px",
     margin: "20px auto",
     border: "1px solid #ccc",
+    borderRadius: 8,
   },
 };
 
 export const FindClientView: React.FC<FindClientViewProps> = ({
-  onShowScanner,
+  // phone,
+  // onPhoneChange,
+  onFindByPhone,
   showScanner,
+  setShowScanner,
+  onWalletDetected,
 }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const scannerRef = useRef<QrScanner | null>(null);
+
+  useEffect(() => {
+    if (!showScanner) return;
+
+    const initScanner = async () => {
+      if (!videoRef.current) return;
+
+      scannerRef.current = new QrScanner(
+        videoRef.current,
+        async (result) => {
+          try {
+            const parsed = JSON.parse(result.data);
+            if (parsed.walletId) {
+              onWalletDetected(parsed.walletId);
+              setShowScanner(false);
+              scannerRef.current?.stop();
+            }
+          } catch (err) {
+            console.log("QR не содержит walletId", err);
+          }
+        },
+        { highlightScanRegion: true, highlightCodeOutline: true }
+      );
+
+      try {
+        await scannerRef.current.start();
+      } catch (err) {
+        console.error("Ошибка доступа к камере", err);
+      }
+    };
+
+    initScanner();
+
+    return () => {
+      scannerRef.current?.stop();
+    };
+  }, [showScanner, onWalletDetected, setShowScanner]);
+
   return (
     <div
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
       <h2>Поиск клиента</h2>
+
       {showScanner ? (
         <>
-          <div id="qr-scanner-region" style={styles.scannerRegion}></div>
-          <Button onClick={onShowScanner} type="secondary">
+          <video ref={videoRef} style={styles.scannerRegion} />
+          <Button onClick={() => setShowScanner(false)} type="secondary">
             Отмена
           </Button>
         </>
       ) : (
         <>
-          {/* <PhoneInput
-            country={"kz"} // Устанавливаем Казахстан по умолчанию
-            countryCodeEditable={false}
-            alwaysDefaultMask={true}
-            disableDropdown
-            value={phone}
-            onChange={onPhoneChange} // Библиотека сама передает отформатированную строку
-            inputStyle={{
-              height: "50px",
-              width: "100%",
-              fontSize: "16px",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-            }}
-            onlyCountries={["kz"]}
-            buttonStyle={{
-              border: "1px solid #ccc",
-              borderRadius: "8px 0 0 8px",
-            }}
-            containerStyle={{
-              marginBottom: "15px",
-            }}
-            placeholder="Номер телефона"
-          />
+          {/* Пример PhoneInput закомментирован */}
+          {/* <PhoneInput ... /> */}
           <Button onClick={onFindByPhone} type="secondary">
             Найти по номеру
           </Button>
-          <Divider>или</Divider> */}
-          <Button onClick={onShowScanner}>Сканировать QR-код</Button>
+          <div style={{ margin: "10px 0" }}>или</div>
+          <Button onClick={() => setShowScanner(true)}>
+            Сканировать QR-код
+          </Button>
         </>
       )}
     </div>

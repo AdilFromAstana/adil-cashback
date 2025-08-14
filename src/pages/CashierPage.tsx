@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-// import QrScanner from "qr-scanner";
+import QrScanner from "qr-scanner";
 import type { Wallet } from "../types";
 import { TransactionView } from "./cashier/TransactionView";
 import api from "../api/axiosInstance";
+import { FindClientView } from "./cashier/FindClientView";
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: { padding: "20px" },
@@ -19,13 +20,13 @@ const styles: { [key: string]: React.CSSProperties } = {
 
 const CashierPage: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  // const scannerRef = useRef<QrScanner | null>(null);
-  const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
-  const [showScanner] = useState(false);
-  const [confirmation, setConfirmation] = useState("");
+  const scannerRef = useRef<QrScanner | null>(null);
 
-  // === QR логика временно закомментирована ===
-  /*
+  const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
+  const [showScanner, setShowScanner] = useState(false);
+  const [confirmation, setConfirmation] = useState("");
+  const [phone, setPhone] = useState("");
+
   useEffect(() => {
     if (!showScanner) return;
 
@@ -62,11 +63,6 @@ const CashierPage: React.FC = () => {
       scannerRef.current?.stop();
     };
   }, [showScanner]);
-  */
-
-  useEffect(() => {
-    fetchWallet(1);
-  }, []);
 
   const fetchWallet = async (walletId: number) => {
     try {
@@ -81,8 +77,17 @@ const CashierPage: React.FC = () => {
   const handleTransactionComplete = (message: string) => {
     setConfirmation(message);
     setTimeout(() => setConfirmation(""), 3000);
-    // Обновляем баланс после операции
     if (selectedWallet) fetchWallet(selectedWallet.id);
+  };
+
+  const handleFindByPhone = async () => {
+    try {
+      const response = await api.get(`/wallets/phone/${phone}`);
+      setSelectedWallet(response.data);
+    } catch (err) {
+      console.error("Кошелек не найден", err);
+      alert("Кошелек не найден");
+    }
   };
 
   return (
@@ -98,22 +103,14 @@ const CashierPage: React.FC = () => {
           onChangeWallet={() => setSelectedWallet(null)}
         />
       ) : (
-        <div>
-          {/* QR-сканер временно скрыт */}
-          {showScanner && (
-            <video
-              ref={videoRef}
-              style={{
-                width: "100%",
-                maxWidth: 400,
-                border: "2px solid #ccc",
-                borderRadius: 8,
-                marginTop: 20,
-              }}
-            />
-          )}
-          {!showScanner && <p>Загрузка кошелька...</p>}
-        </div>
+        <FindClientView
+          phone={phone}
+          onPhoneChange={setPhone}
+          onFindByPhone={handleFindByPhone}
+          showScanner={showScanner}
+          setShowScanner={setShowScanner}
+          onWalletDetected={fetchWallet}
+        />
       )}
     </div>
   );

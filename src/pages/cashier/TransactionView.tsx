@@ -24,6 +24,12 @@ const styles = {
     margin: "15px 0",
     fontSize: "18px",
   },
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    textAlign: "center",
+    marginTop: 5,
+  },
 } as const;
 
 type TransactionViewProps = {
@@ -48,9 +54,13 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
     (parseFloat(purchaseAmount) || 0) * (wallet.shop.cashbackPercent / 100)
   );
 
+  const isAccrueValid = parseFloat(purchaseAmount) > 0;
+  const redeemValue = parseFloat(redeemAmount);
+  const isRedeemValid = redeemValue > 0 && redeemValue <= balance;
+
   const handleAccrue = async () => {
     const amount = parseFloat(purchaseAmount);
-    if (!amount || amount <= 0) return alert("Введите корректную сумму");
+    if (!amount || amount <= 0) return;
 
     try {
       const response = await api.post("/wallets/credit", {
@@ -61,7 +71,7 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
         description: "Начисление бонусов",
       });
 
-      const newBalance = parseFloat(response.data.wallet.balance); // <- берём из wallet
+      const newBalance = parseFloat(response.data.wallet.balance);
       setBalance(newBalance);
 
       onComplete(
@@ -77,22 +87,20 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
   };
 
   const handleRedeem = async () => {
-    const redeem = parseFloat(redeemAmount);
-    if (!redeem || redeem <= 0) return alert("Введите корректную сумму");
-    if (redeem > balance) return alert("Недостаточно бонусов");
+    if (!isRedeemValid) return;
 
     try {
       const response = await api.post("/wallets/debit", {
         walletId: wallet.id,
         userId: wallet.user.id,
         shopId: wallet.shop.id,
-        cashbackAmount: redeem,
+        cashbackAmount: redeemValue,
         description: "Списание бонусов",
       });
 
-      const newBalance = parseFloat(response.data.wallet.balance); // <- исправлено
+      const newBalance = parseFloat(response.data.wallet.balance);
       setBalance(newBalance);
-      onComplete(`Списано: ${redeem}. Новый баланс: ${newBalance}`);
+      onComplete(`Списано: ${redeemValue}. Новый баланс: ${newBalance}`);
       setSheetState("closed");
       setRedeemAmount("");
     } catch (err) {
@@ -157,7 +165,11 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
         <div style={styles.sheetCalculations}>
           Будет начислено: <strong>{calculatedCashback} бонусов</strong>
         </div>
-        <Button onClick={handleAccrue} style={{ backgroundColor: "#43A047" }}>
+        <Button
+          onClick={handleAccrue}
+          style={{ backgroundColor: "#43A047" }}
+          disabled={!isAccrueValid}
+        >
           Подтвердить начисление
         </Button>
       </BottomSheet>
@@ -180,7 +192,16 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
           value={redeemAmount}
           onChange={(e) => setRedeemAmount(e.target.value)}
         />
-        <Button onClick={handleRedeem} style={{ backgroundColor: "#E53935" }}>
+        {!isRedeemValid && redeemAmount && (
+          <p style={styles.errorText}>
+            Сумма списания должна быть больше 0 и не превышать текущий баланс!
+          </p>
+        )}
+        <Button
+          onClick={handleRedeem}
+          style={{ backgroundColor: "#E53935" }}
+          disabled={!isRedeemValid}
+        >
           Подтвердить списание
         </Button>
       </BottomSheet>
