@@ -1,22 +1,16 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import { DivIcon } from "leaflet";
 import MarkerClusterGroup from "react-leaflet-markercluster";
-import ShopDetailsModal from "./ShopDetailsModal";
 
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-
-type Shop = {
-  id: number;
-  name: string;
-  latitude: number;
-  longitude: number;
-};
+import type { Shop } from "../../types";
 
 interface ShopsMapProps {
   shops: Shop[];
+  handleSelectShop: (shop: Shop) => void;
 }
 
 const createCircleIcon = (count: number) =>
@@ -47,7 +41,10 @@ const ShopsMapInner: React.FC<{
 }> = React.memo(({ shops, onSelectShop }) => {
   const center = useMemo<[number, number]>(() => {
     if (shops.length === 0) return [0, 0];
-    return [shops[0].latitude, shops[0].longitude];
+    return [
+      parseFloat(shops[0].latitude ?? "0"),
+      parseFloat(shops[0].longitude ?? "0"),
+    ];
   }, [shops]);
 
   return (
@@ -62,39 +59,32 @@ const ShopsMapInner: React.FC<{
       />
       <MarkerClusterGroup
         showCoverageOnHover={false}
-        iconCreateFunction={(cluster: { getChildCount: () => number }) => {
+        iconCreateFunction={(cluster: { getChildCount: () => any }) => {
           const count = cluster.getChildCount();
           return createCircleIcon(count);
         }}
       >
-        {shops.map((shop) => (
-          <Marker
-            key={shop.id}
-            position={[shop.latitude, shop.longitude]}
-            eventHandlers={{
-              click: () => onSelectShop(shop),
-            }}
-            icon={createCircleIcon(1)}
-          />
-        ))}
+        {shops
+          .filter((shop) => shop.latitude && shop.longitude)
+          .map((shop) => (
+            <Marker
+              key={shop.id}
+              position={[
+                parseFloat(shop.latitude!),
+                parseFloat(shop.longitude!),
+              ]}
+              eventHandlers={{
+                click: () => onSelectShop(shop),
+              }}
+              icon={createCircleIcon(1)}
+            />
+          ))}
       </MarkerClusterGroup>
     </MapContainer>
   );
 });
 
-const ShopsMap: React.FC<ShopsMapProps> = ({ shops }) => {
-  const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
-  const [modalVersion, setModalVersion] = useState(0);
-
-  const handleSelectShop = (shop: Shop) => {
-    if (selectedShop?.id === shop.id) {
-      setSelectedShop(null);
-      setTimeout(() => setSelectedShop(shop), 0);
-    } else {
-      setSelectedShop(shop);
-    }
-  };
-
+const ShopsMap: React.FC<ShopsMapProps> = ({ shops, handleSelectShop }) => {
   if (shops.length === 0) return <div>Магазины не найдены</div>;
 
   return (
@@ -108,17 +98,6 @@ const ShopsMap: React.FC<ShopsMapProps> = ({ shops }) => {
       }}
     >
       <ShopsMapInner shops={shops} onSelectShop={handleSelectShop} />
-
-      {selectedShop && (
-        <ShopDetailsModal
-          key={selectedShop.id + "_" + modalVersion} // modalVersion - счетчик состояния
-          shop={selectedShop}
-          onClose={() => {
-            setSelectedShop(null);
-            setModalVersion((v) => v + 1);
-          }}
-        />
-      )}
     </div>
   );
 };

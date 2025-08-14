@@ -19,7 +19,7 @@ interface ClientState {
   accessToken: string | null;
   isAuthenticated: boolean;
   wallet: Wallet | null;
-  transactions: Transaction[] | null;
+  transactions: Transaction[];
   roles: string[];
 }
 
@@ -60,8 +60,13 @@ const clientSlice = createSlice({
       state.roles = [];
       localStorage.removeItem("accessToken");
     },
+    clientTransactions: (state, action: PayloadAction<Transaction[]>) => {
+      console.log(action.payload);
+      state.transactions = action.payload;
+    },
   },
 });
 
-export const { clientLogin, clientLogout } = clientSlice.actions;
+export const { clientLogin, clientLogout, clientTransactions } =
+  clientSlice.actions;
 export default clientSlice.reducer;

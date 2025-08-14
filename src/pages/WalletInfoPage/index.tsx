@@ -7,13 +7,9 @@ import WalletQRCodeView from "./WalletQRCodeView";
 import WalletTransactionsList from "./WalletTransactionsList";
 import DateRangePicker from "./DateRangePicker";
 import api from "../../api/axiosInstance";
-
-interface Transaction {
-  id: string;
-  amount: number;
-  date: string;
-  type: "in" | "out";
-}
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../../store/store";
+import { clientTransactions } from "../../store/slices/clientSlice";
 
 const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
@@ -21,12 +17,13 @@ const WalletInfoPage: React.FC = () => {
   const { walletId } = useParams();
   const [activeTab, setActiveTab] = useState<"qr" | "tx">("qr");
   const [wallet, setWallet] = useState<Wallet | null>(null);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loadingWallet, setLoadingWallet] = useState(false);
   const [loadingTx, setLoadingTx] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Даты по умолчанию: сегодня и неделю назад
+  const { transactions } = useSelector((state: RootState) => state.client);
+  const dispatch = useDispatch();
+
   const today = new Date();
   const weekAgo = new Date();
   weekAgo.setDate(today.getDate() - 7);
@@ -58,7 +55,7 @@ const WalletInfoPage: React.FC = () => {
           endDate: end,
         },
       });
-      setTransactions(res.data);
+      dispatch(clientTransactions(res.data));
     } catch {
       setError("Не удалось загрузить транзакции");
     } finally {
@@ -66,17 +63,13 @@ const WalletInfoPage: React.FC = () => {
     }
   };
 
-  // Загружаем кошелек при смене id
   useEffect(() => {
     if (walletId) getWallet();
   }, [walletId]);
 
-  // Загружаем транзакции при первом заходе на вкладку "tx" или при смене дат
   useEffect(() => {
-    if (activeTab === "tx") {
-      getWalletTransactions();
-    }
-  }, [activeTab, startDate, endDate]);
+    getWalletTransactions();
+  }, [startDate, endDate]);
 
   return (
     <div

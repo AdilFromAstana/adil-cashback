@@ -26,9 +26,12 @@ const WalletCard: React.FC<WalletCardProps> = ({ wallet }) => {
       onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
       onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
     >
-      {wallet.shop.imageUrl && (
+      {
         <img
-          src={wallet.shop.imageUrl}
+          src={
+            wallet.shop.imageUrl ||
+            "https://static.vecteezy.com/system/resources/previews/013/043/580/non_2x/store-icon-template-vector.jpg"
+          }
           alt={wallet.shop.name}
           style={{
             width: "60px",
@@ -40,7 +43,7 @@ const WalletCard: React.FC<WalletCardProps> = ({ wallet }) => {
             border: "2px solid #335b45",
           }}
         />
-      )}
+      }
       <div style={{ flex: 1 }}>
         <h2
           style={{

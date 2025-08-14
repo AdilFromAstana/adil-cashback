@@ -1,11 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-
-type Shop = {
-  id: number;
-  name: string;
-  latitude: number;
-  longitude: number;
-};
+import type { Shop } from "../../types";
+import StoreGallery from "./StoreGallery";
 
 interface ShopDetailsModalProps {
   shop: Shop;
@@ -22,6 +17,8 @@ const ShopDetailsModal: React.FC<ShopDetailsModalProps> = ({
   const [shouldRender, setShouldRender] = useState(true);
   const touchStartY = useRef<number | null>(null);
   const currentTranslateY = useRef(0);
+
+  const phone = 7761156416;
 
   const handleClose = () => {
     setVisible(false);
@@ -104,7 +101,7 @@ const ShopDetailsModal: React.FC<ShopDetailsModalProps> = ({
           left: 0,
           width: "100vw",
           height: "75vh",
-          backgroundColor: "white",
+          backgroundColor: "#335b45",
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           padding: 20,
@@ -114,18 +111,107 @@ const ShopDetailsModal: React.FC<ShopDetailsModalProps> = ({
           transform: visible ? "translateY(0)" : "translateY(100%)",
           transition: "transform 300ms ease",
           touchAction: "none",
+          color: "#fff",
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onTransitionEnd={onTransitionEnd}
       >
-        <h2>{shop.name}</h2>
-        <p>Широта: {shop.latitude}</p>
-        <p>Долгота: {shop.longitude}</p>
-        <a href="https://go.2gis.com/qb05s" target="_blank">
-          Открыть в 2ГИС
+        <h2 style={{ marginBottom: 8 }}>{shop.name}</h2>
+        <div style={{ fontSize: 14, color: "#ccc", marginBottom: 12 }}>
+          Продуктовый
+        </div>
+
+        <StoreGallery
+          images={[
+            {
+              src: "https://findesk.ru/upload/iblock/c79/c790093a232fa5f111b4691b65c0baaf.jpg",
+              caption: "Витрина",
+            },
+            {
+              src: "https://biz-nes.ru/wp-content/uploads/2021/09/222-34.jpg",
+              caption: "Отдел с овощами",
+            },
+            {
+              src: "https://pridegrupp.ru/upload/iblock/b0c/b0c83882d5181d51d2fa17c531dc6234.jpg",
+              caption: "Кассы",
+            },
+          ]}
+        />
+
+        {shop.address && (
+          <div style={{ fontSize: 16, marginBottom: 8 }}>📍 {shop.address}</div>
+        )}
+
+        <a
+          href={`tel:${phone}`}
+          style={{
+            display: "block",
+            fontSize: 16,
+            marginBottom: 16,
+            color: "#fff",
+            textDecoration: "none",
+          }}
+        >
+          📞 {phone}
         </a>
+
+        <div style={{ fontSize: 14, marginBottom: 16 }}>🕒 Круглосуточный</div>
+
+        <div style={{ display: "flex", gap: "12px", marginBottom: 16 }}>
+          <a
+            href="https://t.me/yourtelegram"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: 24, color: "#fff", textDecoration: "none" }}
+            title="Telegram"
+          >
+            📱
+          </a>
+          <a
+            href="https://wa.me/77761156416"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: 24, color: "#fff", textDecoration: "none" }}
+            title="WhatsApp"
+          >
+            💬
+          </a>
+          <a
+            href="https://instagram.com/yourshop"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: 24, color: "#fff", textDecoration: "none" }}
+            title="Instagram"
+          >
+            📷
+          </a>
+          <a
+            href="https://vk.com/yourshop"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: 24, color: "#fff", textDecoration: "none" }}
+            title="VK"
+          >
+            🖤
+          </a>
+        </div>
+
+        <button
+          style={{
+            width: "100%",
+            backgroundColor: "#4CAF50",
+            color: "#fff",
+            border: "none",
+            padding: "12px 0",
+            borderRadius: 10,
+            fontSize: 16,
+          }}
+          onClick={() => window.open(`https://go.2gis.com/qb05s`, "_blank")}
+        >
+          Стать клиентом
+        </button>
       </div>
     </>
   );

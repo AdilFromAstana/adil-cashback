@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import ShopsList from "./ShopsList"; // ваш список (адаптируем ниже)
 import ShopsMap from "./ShopsMap"; // карта (адаптируем ниже)
 import api from "../../api/axiosInstance";
+import type { Shop } from "../../types";
+import ShopDetailsModal from "./ShopDetailsModal";
 
 const styles = {
   container: {
@@ -42,18 +44,21 @@ const styles = {
   }),
 } as const;
 
-type Shop = {
-  id: number;
-  name: string;
-  latitude: number; // широта
-  longitude: number; // долгота
-  imageUrl?: string;
-};
-
 const ShopsPage: React.FC = () => {
   const [shops, setShops] = useState<Shop[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
+  const [modalVersion, setModalVersion] = useState(0);
+  const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
+
+  const handleSelectShop = (shop: Shop) => {
+    if (selectedShop?.id === shop.id) {
+      setSelectedShop(null);
+      setTimeout(() => setSelectedShop(shop), 0);
+    } else {
+      setSelectedShop(shop);
+    }
+  };
 
   useEffect(() => {
     api
@@ -76,9 +81,9 @@ const ShopsPage: React.FC = () => {
     <div style={styles.container}>
       <div style={styles.title}>Партнеры</div>
       {viewMode === "list" ? (
-        <ShopsList shops={shops} />
+        <ShopsList shops={shops} handleSelectShop={handleSelectShop} />
       ) : (
-        <ShopsMap shops={shops} />
+        <ShopsMap shops={shops} handleSelectShop={handleSelectShop} />
       )}
       <div style={styles.toggleButtonsWrapper}>
         <button
@@ -88,6 +93,16 @@ const ShopsPage: React.FC = () => {
           {viewMode === "map" ? "Список" : "Карта"}
         </button>
       </div>
+      {selectedShop && (
+        <ShopDetailsModal
+          key={selectedShop.id + "_" + modalVersion} // modalVersion - счетчик состояния
+          shop={selectedShop}
+          onClose={() => {
+            setSelectedShop(null);
+            setModalVersion((v) => v + 1);
+          }}
+        />
+      )}
     </div>
   );
 };

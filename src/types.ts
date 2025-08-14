@@ -13,6 +13,12 @@ export interface Shop {
   name: string;
   description: string;
   imageUrl: string;
+  cashbackPercent: number;
+  address: string | null;
+  isActive: boolean;
+  city: string;
+  latitude: string | null;
+  longitude: string | null;
 }
 
 export interface Client {
@@ -31,12 +37,12 @@ export interface Employee {
 
 export interface Transaction {
   id: number;
-  clientId: number;
-  date: string;
-  type: "начисление" | "списание";
-  amount: number;
-  purchaseAmount?: number;
+  type: "credit" | "debit";
   description: string;
+  purchaseAmount: string | null;
+  cashbackPercent: string | null;
+  cashbackAmount: string;
+  createdAt: string;
 }
 
 export type Wallet = {
