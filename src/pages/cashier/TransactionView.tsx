@@ -60,11 +60,14 @@ export const TransactionView: React.FC<TransactionViewProps> = ({
         purchaseAmount: amount,
         description: "Начисление бонусов",
       });
-      const newBalance = parseFloat(response.data.balance);
+
+      const newBalance = parseFloat(response.data.wallet.balance); // <- берём из wallet
       setBalance(newBalance);
+
       onComplete(
         `Начислено: ${calculatedCashback}. Новый баланс: ${newBalance}`
       );
+
       setSheetState("closed");
       setPurchaseAmount("");
     } catch (err) {
